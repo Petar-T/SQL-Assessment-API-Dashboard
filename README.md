@@ -3,7 +3,7 @@ Simple SQL Assessment demo, created on top of CMS server list. It is collecting 
 
 PowerShell script to use central management server, loop through managed instances and collect results of SQL Assessment API   
 
-![](https://github.com/Petar-T/SQL-Assessment-API-Dashboard/blob/master/Instructions/Dashboard.JPG)
+![](https://github.com/Petar-T/SQL-Assessment-API-Dashboard/Instructions/Dashboard.JPG)
 ## Installation
 
 ```python
