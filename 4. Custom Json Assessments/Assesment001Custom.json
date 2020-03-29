@@ -1,0 +1,208 @@
+{
+"schemaVersion": "1.0",
+	"version": "0.666",
+	"name": "Custom Checks Ruleset", 
+	"rules":[
+		{
+			"target": {
+			  "type": "Server",
+			  "platform": "/^(Windows|Linux)$/",
+			  "engineEdition": "OnPremises"
+			},
+			"id": "CTFP",
+			"itemType": "definition",
+			"tags": [ "CustomRuleset", "TraceFlag", "Performance", "Memory", "ColumnStore" ],
+			"displayName": "Cost Threshold of Parallelism",
+			"description": "Cost Threshold of Parallelism",
+			"message": "Cost Threshold of Parallelism is set to @{value_in_use} but it should be 42",
+			"helpLink": "https://support.microsoft.com/help/4465518",
+			"level": "Information",
+			"probes": [ "Custom_CTFP" ],
+            "condition": {
+			  "equal": [ "@value_in_use", 42 ]
+			}
+		},
+		{
+			"target": {
+			  "type": "Server",
+			  "platform": "/^(Windows|Linux)$/",
+			  "engineEdition": "OnPremises"
+			},
+			"id": "MaxDOP",
+			"itemType": "definition",
+			"tags": [ "CustomRuleset", "TraceFlag", "Performance", "Memory", "ColumnStore" ],
+			"displayName": "Max Degree of Parallelism",
+			"description": "Max Degree of Parallelism",
+			"message": "Max Degree of parallelism is set to  @{value_in_use} but it should be 666",
+			"helpLink": "https://support.microsoft.com/help/4465518",
+			"level": "Information",
+			"probes": [ "Custom_MaxDOP" ],
+            "condition": {
+			  "greater": [ "@value_in_use", 0 ]
+			}
+		},
+		{
+			"target": {
+			  "type": "Server",
+			  "platform": "/^(Windows|Linux)$/",
+			  "engineEdition": "OnPremises"
+			},
+			"id": "lightweight pooling",
+			"itemType": "definition",
+			"tags": [ "CustomRuleset", "TraceFlag", "Performance", "Memory", "ColumnStore" ],
+			"displayName": "lightweight pooling",
+			"description": "lightweight pooling should be disabled",
+			"message": "lightweight pooling should be disabled",
+			"helpLink": "https://support.microsoft.com/help/4465518",
+			"level": "Information",
+			"probes": [ "Custom_LightweightPooling" ],
+            "condition": {
+			  "equal": [ "@value_in_use", 0 ]
+			}
+		},
+		{
+			"target": {
+			  "type": "Server",
+			  "platform": "/^(Windows|Linux)$/",
+			  "engineEdition": "OnPremises"
+			},
+			"id": "priority boost",
+			"itemType": "definition",
+			"tags": [ "CustomRuleset", "TraceFlag", "Performance", "Memory", "ColumnStore" ],
+			"displayName": "priority boost",
+			"description": "priority boost should be disabled",
+			"message": "priority boost should be disabled",
+			"helpLink": "https://support.microsoft.com/help/4465518",
+			"level": "Information",
+			"probes": [ "Custom_PriorityBoost" ],
+            "condition": {
+			  "equal": [ "@value_in_use", 0 ]
+			}
+		},
+		{
+			"target": {
+			  "type": "Server",
+			  "platform": "/^(Windows|Linux)$/",
+			  "engineEdition": "OnPremises"
+			},
+			"id": "CustomSecureRule",
+			"itemType": "definition",
+			"tags": [ "CustomRuleset", "Security" ],
+			"displayName": "Custom Security Ruleset (a.k.a. Sum Ting Wong) ",
+			"description": "Custom Security Ruleset",
+			"message": "Security Ruleset is returning @{NumRec} rows but it should be 0",
+			"helpLink": "https://support.microsoft.com/help/4465518",
+			"level": "Information",
+			"probes": [ "CustomSecureRule_Probe" ],
+            "condition": {
+			  "equal": [ "@NumRec", 0 ]
+			}
+		},
+		{
+			"target": {
+			  "type": "Server",
+			  "platform": "/^(Windows|Linux)$/",
+			  "engineEdition": "OnPremises"
+			},
+			"id": "NumberOfSysadmins",
+			"itemType": "definition",
+			"tags": [ "CustomRuleset", "Security" ],
+			"displayName": "Custom Security Ruleset (a.k.a. Sum Ting Wong) ",
+			"description": "Custom Security Ruleset",
+			"message": "Number of sysadmins on server is @{SysadminsCount} rows but it should be <some value>",
+			"helpLink": "https://support.microsoft.com/help/4465518",
+			"level": "Warning",
+			"probes": [ "SysadminsCount_Probe" ],
+            "condition": {
+			  "equal": [ "@SysadminsCount", 666 ]
+			}
+		}
+	],
+	"probes":{
+		"Custom_CTFP": [
+			{
+			  "type": "SQL",
+			  "target": {
+				"type": "Server",
+				"engineEdition": "OnPremises, ManagedInstance"
+			  },
+			  "implementation": {
+				"query": "SELECT name, value, value_in_use   FROM sys.configurations WHERE name = 'cost threshold for parallelism'"
+				}
+			  }
+			],
+		"Custom_MaxDOP": [
+			{
+			  "type": "SQL",
+			  "target": {
+				"type": "Server",
+				"engineEdition": "OnPremises, ManagedInstance"
+			  },
+			  "implementation": {
+				"query": "SELECT name, value, value_in_use   FROM sys.configurations WHERE name = 'max degree of parallelism'"
+				}
+			}
+			],
+			"Custom_LightweightPooling": [
+				{
+				  "type": "SQL",
+				  "target": {
+					"type": "Server",
+					"engineEdition": "OnPremises, ManagedInstance"
+				  },
+				  "implementation": {
+					"query": "SELECT name, value, value_in_use   FROM sys.configurations WHERE name = 'lightweight pooling'"
+					}
+				}
+			],
+			"Custom_PriorityBoost": [
+				{
+				  "type": "SQL",
+				  "target": {
+					"type": "Server",
+					"engineEdition": "OnPremises, ManagedInstance"
+				  },
+				  "implementation": {
+					"query": "SELECT name, value, value_in_use   FROM sys.configurations WHERE name = 'priority boost'"
+					}
+				}
+				],
+				"CustomSecureRule_Probe": [
+					{
+					  "type": "SQL",
+					  "target": {
+						"type": "Server",
+						"engineEdition": "OnPremises, ManagedInstance"
+					  },
+					  "implementation": {
+						"query": "Select Count(q.principal_id) as NumRec from (
+						SELECT pr.principal_id, 
+							   pr.name, pr.type_desc,   
+							   pe.state_desc, 
+								  pe.permission_name ,
+								  pe.class_desc 
+						FROM sys.server_principals AS pr   
+						JOIN sys.server_permissions AS pe 
+							   ON pe.grantee_principal_id = pr.principal_id
+						where pr.name = 'Public' --and pe.class_desc != 'Endpoint'
+						) as q"
+						}
+					  }
+				],
+				"SysadminsCount_Probe": [
+					{
+					  "type": "SQL",
+					  "target": {
+						"type": "Server",
+						"engineEdition": "OnPremises, ManagedInstance"
+					  },
+					  "implementation": {
+						"query": "SELECT Count(*) as SysadminsCount 
+						FROM master.sys.server_principals 
+						WHERE IS_SRVROLEMEMBER ('sysadmin',name) = 1
+						and  is_disabled=0"
+						}
+					  }
+					]
+		}
+}
