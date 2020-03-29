@@ -17,6 +17,16 @@ Open Perfmon_Dashboard.pbix and load file
 ```
 
 ## Detailed HowTo
+
+```python
+Edit Run_SQLAssessment.ps1
+  Run_SQLAssessment -DW_Server 'AlwaysOnN1' -CMS_Group 'Production' -Check_Type 'Server'
+  #DW_Server -> server with database and CMS configured
+  #CMS_Group -> Name of CMS group to use 
+  #Check_Type -> 'Server' or 'Database' 
+Open Assessment_Dashboard on Reporting portal   
+```
+
 Use the step by step instructions file  [instruction](https://github.com/Petar-T/PerfMon-collector/blob/master/Docs/User_Manual.docx) 
 
 ## Contributing
