@@ -1,0 +1,12 @@
+{ 
+	"schemaVersion": "1.0",
+	"version": "0.666",
+	"name": "Custom Overrides", 
+	"rules":[ 
+		{ 
+			"id": ["DefaultRuleset"], 
+			"itemType": "override",
+			"enabled": false 
+		}
+	] 
+}

@@ -1,0 +1,242 @@
+{
+"schemaVersion": "1.0",
+	"version": "0.666",
+	"name": "Custom Checks Ruleset", 
+	"rules":[
+		{
+			"target": {
+			  "type": "Server",
+			  "platform": "/^(Windows|Linux)$/",
+			  "engineEdition": "OnPremises"
+			},
+			"id": "xp_cmdshell",
+			"itemType": "definition",
+			"tags": [ "CustomRuleset", "Best Practices", "Vollgar" ],
+			"displayName": "xp_cmdshell",
+			"description": "xp_cmdshell is disabled by default.",
+			"message": "XP_cmdshell is enabled, you should doublecheck it's usage. ",
+			"helpLink": "https://docs.microsoft.com/en-us/sql/relational-databases/system-stored-procedures/xp-cmdshell-transact-sql?view=sql-server-ver15",
+			"level": "Information",
+			"probes": [ "Custom_XP_Cmdshell" ],
+            "condition": {
+			  "equal": [ "@value_in_use", 0 ]
+			}
+		},
+		{
+			"target": {
+			  "type": "Server",
+			  "platform": "/^(Windows|Linux)$/",
+			  "engineEdition": "OnPremises"
+			},
+			"id": "AHDQ",
+			"itemType": "definition",
+			"tags": [ "CustomRuleset", "Best Practices", "Vollgar" ],
+			"displayName": "Ad Hoc Distributed Queries",
+			"description": "Ad Hoc Distributed Queries option is disabled by default.",
+			"message": "Ad Hoc Distributed Queries option is enabled, you should doublecheck it's usage. ",
+			"helpLink": "https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/ad-hoc-distributed-queries-server-configuration-option?view=sql-server-ver15",
+			"level": "Information",
+			"probes": [ "Custom_AHDQ" ],
+            "condition": {
+			  "equal": [ "@value_in_use", 0 ]
+			}
+		},
+		{
+			"target": {
+				"type": "Server",
+				"platform": "/^(Windows|Linux)$/",
+				"engineEdition": "OnPremises"
+			  },
+			  "id": "Ole_Automation",
+			  "itemType": "definition",
+			  "tags": [ "CustomRuleset", "Best Practices", "Vollgar" ],
+			  "displayName": "Ole Automation Procedures",
+			  "description": "Ole Automation Procedures option is disabled by default.",
+			  "message": "Ole Automation Procedures option is enabled, you should doublecheck it's usage. ",
+			  "helpLink": "https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/ad-hoc-distributed-queries-server-configuration-option?view=sql-server-ver15",
+			  "level": "Information",
+			  "probes": [ "Custom_Ole_Automation" ],
+			  "condition": {
+				"equal": [ "@value_in_use", 0 ]
+			}
+		},
+		{
+			"target": {
+				"type": "Server",
+				"platform": "/^(Windows|Linux)$/",
+				"engineEdition": "OnPremises"
+			  },
+			  "id": "SA_Account_disabled",
+			  "itemType": "definition",
+			  "tags": [ "CustomRuleset", "Best Practices", "Vollgar" ],
+			  "displayName": "SA Account disabled",
+			  "description": "SA Account should be disabled",
+			  "message": "SA Account should be disabled",
+			  "helpLink": "https://docs.microsoft.com/en-us/sql/sql-server/install/security-considerations-for-a-sql-server-installation?view=sql-server-ver15",
+			  "level": "Warning",
+			  "probes": [ "Custom_SA1" ],
+			  "condition": {
+				"equal": [ "@is_disabled", 0 ]
+			}
+		},
+		{
+			"target": {
+				"type": "Server",
+				"platform": "/^(Windows|Linux)$/",
+				"engineEdition": "OnPremises"
+			  },
+			  "id": "SA_Account_Renamed",
+			  "itemType": "definition",
+			  "tags": [ "CustomRuleset", "Best Practices", "Vollgar" ],
+			  "displayName": "SA Account renamed",
+			  "description": "SA Account should be renamed",
+			  "message": "SA Account should be renamed",
+			  "helpLink": "https://docs.microsoft.com/en-us/sql/sql-server/install/security-considerations-for-a-sql-server-installation?view=sql-server-ver15",
+			  "level": "Warning",
+			  "probes": [ "Custom_SA2" ],
+			  "condition": {
+				"ne": [ "@Name_in_use", "sa" ]
+			}
+		},
+		{
+			"target": {
+			  "type": "Server",
+			  "platform": "/^(Windows|Linux)$/",
+			  "engineEdition": "OnPremises"
+			},
+			"id": "Public_role_privileges",
+			"itemType": "definition",
+			"tags": [ "CustomRuleset", "Security","Vollgar" ],
+			"displayName": "Public role privileges",
+			"description": "Public role privileges (without endpoints)",
+			"message": "Number of Public role privileges is returning @{NumRec} rows but it should be 0",
+			"helpLink": "https://support.microsoft.com/help/4465518",
+			"level": "Warning",
+			"probes": [ "CustomSecureRule_Probe" ],
+            "condition": {
+			  "equal": [ "@NumRec", 0 ]
+			}
+		},
+		{
+			"target": {
+			  "type": "Server",
+			  "platform": "/^(Windows|Linux)$/",
+			  "engineEdition": "OnPremises"
+			},
+			"id": "NumberOfSysadmins",
+			"itemType": "definition",
+			"tags": [ "CustomRuleset", "Security", "Vollgar" ],
+			"displayName": "Number Of Sysadmins",
+			"description": "Number Of Sysadmins",
+			"message": "Number of sysadmins on server is @{Num_Of_SA} , and all admins are @{XX}",
+			"helpLink": "https://support.microsoft.com/help/4465518",
+			"level": "Warning",
+			"probes": [ "SysadminsCount_Probe" ],
+			"threshold": 25,
+            "condition": {
+			  "equal": [ "@Num_Of_SA", "@threshold" ]
+			}
+		}
+	],
+	"probes":{
+		"Custom_XP_Cmdshell": [
+			{
+			  "type": "SQL",
+			  "target": {
+				"type": "Server",
+				"engineEdition": "OnPremises, ManagedInstance"
+			  },
+			  "implementation": {
+				"query": "SELECT value_in_use FROM sys.configurations where [name] = 'xp_cmdshell'"
+				}
+			  }
+			],
+		"Custom_AHDQ": [
+			{
+			  "type": "SQL",
+			  "target": {
+				"type": "Server",
+				"engineEdition": "OnPremises, ManagedInstance"
+			  },
+			  "implementation": {
+				"query": "SELECT value_in_use FROM sys.configurations where [name] = 'Ad Hoc Distributed Queries'"
+				}
+			}
+			],
+			"Custom_Ole_Automation": [
+				{
+				  "type": "SQL",
+				  "target": {
+					"type": "Server",
+					"engineEdition": "OnPremises, ManagedInstance"
+				  },
+				  "implementation": {
+					"query": "SELECT value_in_use FROM sys.configurations where [name] = 'Ole Automation Procedures'"
+					}
+				}
+			],
+			"Custom_SA1": [
+				{
+				  "type": "SQL",
+				  "target": {
+					"type": "Server",
+					"engineEdition": "OnPremises, ManagedInstance"
+				  },
+				  "implementation": {
+					"query": "SELECT is_disabled FROM sys.sql_logins WHERE principal_id = 1;"
+					}
+				}
+			],
+			"Custom_SA2": [
+				{
+				  "type": "SQL",
+				  "target": {
+					"type": "Server",
+					"engineEdition": "OnPremises, ManagedInstance"
+				  },
+				  "implementation": {
+					"query": "SELECT name as Name_in_use FROM sys.sql_logins WHERE principal_id = 1;"
+					}
+				}
+			],
+			"CustomSecureRule_Probe": [
+					{
+					  "type": "SQL",
+					  "target": {
+						"type": "Server",
+						"engineEdition": "OnPremises, ManagedInstance"
+					  },
+					  "implementation": {
+						"query": "Select Count(q.principal_id) as NumRec from (
+						SELECT pr.principal_id, 
+							   pr.name, pr.type_desc,   
+							   pe.state_desc, 
+								  pe.permission_name ,
+								  pe.class_desc 
+						FROM sys.server_principals AS pr   
+						JOIN sys.server_permissions AS pe 
+							   ON pe.grantee_principal_id = pr.principal_id
+						where pr.name = 'Public' and pe.class_desc != 'Endpoint'
+						) as q"
+						}
+					  }
+				],
+				"SysadminsCount_Probe": [
+					{
+					  "type": "SQL",
+					  "target": {
+						"type": "Server",
+						"engineEdition": "OnPremises, ManagedInstance"
+					  },
+					  "implementation": {
+						"query": "SELECT STUFF((SELECT '; ' + name 
+						FROM  master.sys.server_principals 
+					WHERE IS_SRVROLEMEMBER ('sysadmin',name) = 1 and  is_disabled=0
+						FOR XML PATH('')),1,1,'') XX, Count(Ret.Name) as Num_Of_SA
+					FROM(SELECT principal_id , Name  FROM master.sys.server_principals 
+					WHERE IS_SRVROLEMEMBER ('sysadmin',name) = 1 and  is_disabled=0) ret"
+						}
+					  }
+					]
+		}
+}
